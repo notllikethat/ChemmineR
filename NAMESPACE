@@ -1,5 +1,6 @@
 ## IMPORTS
-import(methods, graphics, stats, RCurl, rjson, DBI,digest,Rcpp,ggplot2,grid,gridExtra)
+import(methods, graphics, stats, RCurl, rjson, DBI,digest,Rcpp,
+	ggplot2,grid,gridExtra,png)
 
 useDynLib(ChemmineR)
 
@@ -53,6 +54,7 @@ export(
     ## Plotting
     ## Source: AllClasses.R
     "plotStruc", 
+	 "openBabelPlot",
 	 "draw_sdf",
 
     ## Atom pair functions
@@ -70,9 +72,11 @@ export(
     ## Source: sim.R
     "fp2bit", "fpSim",
 
-    ## Web Tool functions
-    ## Source: sim.R
+    ## Web Tool function   These are all deprecated now, in favor of the pubchem* functions below
+    ## Source: chemmine_tools.R
     "getIds", "searchString", "searchSim", "sdf2smiles", "smiles2sdf",
+
+	 "pubchemCidToSDF","pubchemSmilesSearch","pubchemSDFSearch",
 
     ## Clustering functions
     ## Source: cluster.R

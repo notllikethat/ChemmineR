@@ -1,5 +1,15 @@
 \name{NEWS}
 \title{ChemmineR News}
+\section{CHANGES IN VERSION 2.30.0}{
+
+   \subsection{NEW FEATURES}{
+		\itemize{
+			\item Plots can be generated using OpenBabel library (requires ChemmineOB package and OpenBabel)
+			\item Functions to query data from PubChem directly. 
+		}
+	}
+}
+
 \section{CHANGES IN VERSION 2.20.0}{
 
    \subsection{NEW FEATURES}{

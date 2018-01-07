@@ -195,3 +195,27 @@ test.parseV3000 <- function() {
 
 
 }
+
+
+test.pubchemPUG <- function(){
+
+	sdf = ChemmineR:::pubchemCidToSDF(c(434,435))
+	message("cid to sdf, length: ",length(sdf))	
+	checkEquals(length(sdf),2)
+
+
+	sdf = ChemmineR:::pubchemSmilesSearch("C1CCCCCC1")
+	message("smiles search, length: ",length(sdf))
+	checkTrue(length(sdf) >= 1)
+
+	data(sdfsample)
+	sdf = ChemmineR:::pubchemSDFSearch(sdfsample[1])
+	message("sdf search, length: ",length(sdf))
+	checkTrue(length(sdf) >= 1)
+
+	# just check that no exception is thrown
+	ChemmineR:::pubchemSDF2PNG(sdfsample[1],"test-sample.png")
+
+
+}
+

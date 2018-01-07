@@ -1,4 +1,4 @@
-\name{searchString}
+\name{searchString-deprecated}
 \alias{searchString}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{

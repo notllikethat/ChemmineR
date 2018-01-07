@@ -1876,52 +1876,84 @@ MF <- function(x, ...) {
 	return(sapply(names(rings), function(x) .arom(con, b, r=rings[[x]])))
 }
 
+## Inner rings inherit aromaticity assignment from super rings if they are fully contained in them
+## This is necessary since the aromaticity assignment for inner rings may miss context information required
+## for Hueckel's rule. Note, for this to work the input data has to be generated with .rings(x, Inf)
+.containedArom <- function(myrings, myarom) {
+    if(!all(names(myrings) %in% names(myarom))) stop("Both inputs need to have the same number of rings with identical names")
+    if(all(!myarom)) {
+        return(myarom)
+    } else {
+        nonaromrings <- myrings[!myarom] # Restricts loop to non-aromatic entries
+        aromrings <- myrings[myarom]
+        for(i in seq_along(nonaromrings)) {
+            updatearom  <- sapply(aromrings, function(x) all(nonaromrings[[i]] %in% x))
+            if(any(updatearom)) myarom[names(nonaromrings[i])] <- TRUE
+        }
+        return(myarom)
+    }
+}
+
 ## (g) Ring and aromaticity perception by running the functions (1)-(5) 
 rings <- function(x, upper=Inf, type="all", arom=FALSE, inner=FALSE) {
-        if(!any(c("SDF", "SDFset") %in% class(x))) stop("x needs to be of class SDF or SDFset")
-	if(inner==TRUE & upper!=Inf) stop("Inner ring prediction requires upper=Inf")
-        runAll <- function(x, upper) {
-		con <- .cyclicCore(x)
-		if(any(dim(con) == 0) | is.vector(con) | all(con == 0)) { # TRUE for linear compounds 
-			if(arom==TRUE) {
-				if(type=="all") return(list(RINGS=NULL, AROMATIC=NULL))
-				if(type=="count") return(c(RINGS=0, AROMATIC=0))
-			} else {
-				if(type=="all") return(NULL)
-				if(type=="count") return(0)
-			}
-		} else {
-			path <- .linearCon(x=con)
-			cyclist <- .update(con=con, path=path)
-			myrings <- .rings(cyclist, upper+1) # Plus 'upper+1' is required because at this step all rings have duplicated atoms at ring closure
-			myrings <- lapply(myrings, function(x) x[-1]) # Removes duplicated atom at ring closure 
-			if(upper==Inf & inner==TRUE) myrings <- .is.inner(x=myrings) # Reduces myrings to inner rings only 
-			if(arom==TRUE) {
-				myarom <- .is.arom(sdf=x, rings=myrings)
-				if(type=="all") return(list(RINGS=myrings, AROMATIC=myarom))
-				if(type=="arom") return(list(AROMATIC_RINGS=myrings[myarom]))
-				if(type=="count") return(c(RINGS=length(myrings), AROMATIC=sum(myarom)))
-			} else {
-				if(type=="all") return(myrings)
-				if(type=="count") return(length(myrings))
-			}
-		}
-	}
-	if(class(x)=="SDF") { 
-		return(runAll(x, upper))
-	}
-	if(class(x)=="SDFset" & length(x) == 1) { 
-		return(runAll(x[[1]], upper))
-	}
-	if(class(x)=="SDFset" &  length(x) > 1) {
-		myrings <- lapply(1:length(x), function(y) runAll(x[[y]], upper))
-		names(myrings) <- cid(x)
-		if(type=="all" | type=="arom") return(myrings)
-		if(type=="count") {
-			mycol <- c("RINGS", "AROMATIC")
-			return(matrix(unlist(myrings), ncol=length(myrings[[1]]), dimnames=list(names(myrings), mycol[1:length(myrings[[1]])]), byrow=T))
-		}
-	}
+    if(!any(c("SDF", "SDFset") %in% class(x))) stop("x needs to be of class SDF or SDFset")
+    if(inner==TRUE & upper!=Inf) stop("Inner ring prediction requires upper=Inf")
+    if(type=="arom" & arom==FALSE) stop("type='arom' requires arom=TRUE")
+    runAll <- function(x, upper) {
+        con <- .cyclicCore(x)
+        if(any(dim(con) == 0) | is.vector(con) | all(con == 0)) { # TRUE for linear compounds 
+            if(arom==TRUE) {
+                if(type=="all") return(list(RINGS=NULL, AROMATIC=NULL))
+                if(type=="count") return(c(RINGS=0, AROMATIC=0))
+            } else {
+                if(type=="all") return(NULL)
+                if(type=="count") return(0)
+            }
+        } else {
+            path <- .linearCon(x=con)
+            cyclist <- .update(con=con, path=path)
+            if(arom==TRUE) {
+                myrings <- .rings(cyclist, Inf) # Full ring set required to identify remaining aromatic rings with .containedArom 
+                myrings <- lapply(myrings, function(x) x[-1]) # Removes duplicated atom at ring closure 
+                myarom <- .is.arom(sdf=x, rings=myrings)
+                myarom <- .containedArom(myrings, myarom)
+                if(upper==Inf & inner==TRUE) {
+                    myringnames <- names(.is.inner(x=myrings)) # Returns names of inner rings only
+                    myrings <- myrings[myringnames]
+                    myarom <- myarom[myringnames]
+                }
+                if(upper!=Inf) {
+                    uppernames <- names(myrings[sapply(myrings, length) <= upper])
+                    myrings <- myrings[uppernames] 
+                    myarom <- myarom[uppernames]
+                }
+                if(type=="all") return(list(RINGS=myrings, AROMATIC=myarom))
+                if(type=="arom") return(list(AROMATIC_RINGS=myrings[myarom]))
+                if(type=="count") return(c(RINGS=length(myrings), AROMATIC=sum(myarom)))
+            } else {
+                myrings <- .rings(cyclist, upper+1) # Plus 'upper+1' is required because at this step all rings have duplicated atoms at ring closure
+                myrings <- lapply(myrings, function(x) x[-1]) # Removes duplicated atom at ring closure 
+                if(upper==Inf & inner==TRUE) myrings <- .is.inner(x=myrings) # Reduces myrings to inner rings only 
+                if(type=="all") return(myrings)
+                if(type=="count") return(length(myrings))
+            }
+        }
+    }
+    if(class(x)=="SDF") { 
+        return(runAll(x, upper))
+    }
+    if(class(x)=="SDFset" & length(x) == 1) { 
+        return(runAll(x[[1]], upper))
+    }
+    if(class(x)=="SDFset" &  length(x) > 1) {
+        myrings <- lapply(1:length(x), function(y) runAll(x[[y]], upper))
+        names(myrings) <- cid(x)
+        if(type=="all" | type=="arom") return(myrings)
+        if(type=="count") {
+            mycol <- c("RINGS", "AROMATIC")
+            return(matrix(unlist(myrings), ncol=length(myrings[[1]]), dimnames=list(names(myrings), mycol[1:length(myrings[[1]])]), byrow=T))
+        }
+    }
 }
 ## Usage:
 # rings(sdfset[1:4], upper=6, type="all", arom=TRUE)
@@ -2636,6 +2668,20 @@ plotStruc <- function(sdf,
 ## Usage:
 # plotStruc(sdf=sdfset[[2]], atomcex=1.2, atomnum=F, no_print_atoms=c("C"), noHbonds=TRUE, bondspacer=0.08)
 # par(mfrow=c(2,3)); for(i in 1:6) plotStruc(sdf=sdfset[[i]], atomcex=1.8, atomnum=F, no_print_atoms=c("C"), noHbonds=TRUE, bondspacer=0.08)
+openBabelPlot=function(sdfset,
+							 height=600,
+							 noHbonds=TRUE,
+							 regenCoords=FALSE
+){
+	.ensureOB()
+
+	tempF = tempfile()
+	sdf2image(sdfset,tempF,format="PNG",height=height,noHbonds,regenCoords)
+	img = readPNG(tempF)
+	file.remove(tempF)
+	plot(c(0,100),c(0,100), type="n", axes=F, xlab="", ylab="")
+	rasterImage(img,0,0,100,100)
+}
 
 ## Plot method for single SDF object
 setMethod(f="plot", signature="SDF", definition=function(x, print=TRUE, ...) { 

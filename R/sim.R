@@ -813,6 +813,34 @@ fpSim <- function(x, y, sorted=TRUE, method="Tanimoto",
 	
 
 }
+
+
+sdf2image <- function(sdf,filename,format="PNG",
+							 height=300,
+							 noHbonds=TRUE,
+							 regenCoords=FALSE){
+	 .ensureOB()
+
+    if(! class(sdf) == "SDFset"){
+        stop('reference compound must be a compound of class \"SDFset\"')
+    } 
+
+	 genOps = data.frame(names=character(0),args=character(0))
+	 outOps = data.frame(names=character(0),args=character(0))
+
+	 if(height != 300) #differs from default
+		 outOps = rbind(outOps,data.frame(names="p",args=as.character(height)))
+	 if(noHbonds)
+		 genOps = rbind(genOps,data.frame(names="d",args=""))
+	 if(regenCoords)
+		 genOps = rbind(genOps,data.frame(names="gen2D",args=""))
+
+	 defs = sdfSet2definition(sdf)
+	 convertToImage("SDF",format,defs,filename,
+						 options = genOps, out_options = outOps)
+
+}
+
 ######################################
 ## Query ChemMine Web Tools Service ##
 ######################################

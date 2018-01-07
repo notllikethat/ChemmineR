@@ -1,5 +1,11 @@
 changelog
     
+    version 2.29.4
+        - fixed bug in aromaticity assignment
+    
+    version 2.23.5-2.29.3
+        - various updates
+    
     version 2.23.2 - 2.23.5
         - ported vignette to R Markdown
         - vignette updates

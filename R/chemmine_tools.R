@@ -122,34 +122,38 @@ sdf.visualize <- function(sdf){
 
 # get CIDs from PubChem through ChemMine Web Tools
 getIds <- function(cids) {
-    if(! class(cids) == "numeric"){
-        stop('reference compound ids must be of class \"numeric\"')
-    }
-    if(length(cids) == 0){
-        stop('no compounds to retrieve- input must contain at least one cid')
-    }
-    jobToken <- launchCMTool("pubchemID2SDF", cids)
-    result(jobToken)
+#    if(! class(cids) == "numeric"){
+#        stop('reference compound ids must be of class \"numeric\"')
+#    }
+#    if(length(cids) == 0){
+#        stop('no compounds to retrieve- input must contain at least one cid')
+#    }
+#    jobToken <- launchCMTool("pubchemID2SDF", cids)
+#    result(jobToken)
+	pubchemCidToSDF(cids)
 }
 
 # search PubChem through ChemMine Web Tools with smiles query
 searchString <- function(smiles) {
-    if(class(smiles) == "SMIset")
-        smiles = as.character(smiles)
-    if(! class(smiles) == "character"){
-        stop('reference compound must be a smiles string of class \"character\"')
-    } 	
-    sdfquery <- smiles2sdf(smiles)
-    searchSim(sdfquery)
+   # if(class(smiles) == "SMIset")
+   #     smiles = as.character(smiles)
+   # if(! class(smiles) == "character"){
+   #     stop('reference compound must be a smiles string of class \"character\"')
+   # } 	
+   # sdfquery <- smiles2sdf(smiles)
+   # searchSim(sdfquery)
+	pubchemSmilesSearch(smiles)
 }
 
 # search PubChem through ChemMine Web Tools with sdf query
 searchSim <- function(sdf) {
-    if(! class(sdf) == "SDFset"){
-        stop('reference compound must be a compound of class \"SDFset\"')
-    } 
-    jobToken <- launchCMTool('Fingerprint Search', sdf, 'Similarity Cutoff'=0.9, 'Max Compounds Returned'=200)
-    cids <- as.numeric(result(jobToken))
-    if(length(cids) == 0) return(SDFset())
-    getIds(cids)
+   # if(! class(sdf) == "SDFset"){
+   #     stop('reference compound must be a compound of class \"SDFset\"')
+   # } 
+   # jobToken <- launchCMTool('Fingerprint Search', sdf, 'Similarity Cutoff'=0.9, 'Max Compounds Returned'=200)
+   # cids <- as.numeric(result(jobToken))
+   # if(length(cids) == 0) return(SDFset())
+   # getIds(cids)
+	pubchemSDFSearch(smiles)
+
 }
