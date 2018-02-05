@@ -815,7 +815,7 @@ fpSim <- function(x, y, sorted=TRUE, method="Tanimoto",
 }
 
 
-sdf2image <- function(sdf,filename,format="PNG",
+sdf2image <- function(sdf,filename,format="SVG",
 							 height=300,
 							 noHbonds=TRUE,
 							 regenCoords=FALSE){

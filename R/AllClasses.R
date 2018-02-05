@@ -2676,8 +2676,8 @@ openBabelPlot=function(sdfset,
 	.ensureOB()
 
 	tempF = tempfile()
-	sdf2image(sdfset,tempF,format="PNG",height=height,noHbonds,regenCoords)
-	img = readPNG(tempF)
+	sdf2image(sdfset,tempF,format="SVG",height=height,noHbonds,regenCoords)
+	img = rsvg(tempF)
 	file.remove(tempF)
 	plot(c(0,100),c(0,100), type="n", axes=F, xlab="", ylab="")
 	rasterImage(img,0,0,100,100)

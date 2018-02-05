@@ -1,6 +1,6 @@
 ## IMPORTS
 import(methods, graphics, stats, RCurl, rjson, DBI,digest,Rcpp,
-	ggplot2,grid,gridExtra,png)
+	ggplot2,grid,gridExtra,png,rsvg)
 
 useDynLib(ChemmineR)
 
