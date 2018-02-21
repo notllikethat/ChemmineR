@@ -1,6 +1,6 @@
 ## IMPORTS
 import(methods, graphics, stats, RCurl, rjson, DBI,digest,Rcpp,
-	ggplot2,grid,gridExtra,png,rsvg)
+	ggplot2,grid,gridExtra,png)
 
 useDynLib(ChemmineR)
 
@@ -54,7 +54,7 @@ export(
     ## Plotting
     ## Source: AllClasses.R
     "plotStruc", 
-	 "openBabelPlot",
+	 #"openBabelPlot",
 	 "draw_sdf",
 
     ## Atom pair functions
