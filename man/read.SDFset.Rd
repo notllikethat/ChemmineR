@@ -8,11 +8,15 @@ Imports one or many molecules from an SD/MOL file and stores it in an \code{SDFs
 Supports both the V2000 and V3000 formats.
 }
 \usage{
-read.SDFset(sdfstr = sdfstr, ...)
+read.SDFset(sdfstr = sdfstr,skipErrors=FALSE, ...)
 }
 \arguments{
   \item{sdfstr}{
 		path/name to an SD file; alternatively an \code{SDFstr} object can be provided
+  }
+  \item{skipErrors}{
+	  If true, molecules which fail to parse will be removed from the output. Otherwise
+	  and error will be thrown and processing of the input will stop. 
   }
   \item{\dots}{
 		option to pass on additional arguments. Possible arguments are: 

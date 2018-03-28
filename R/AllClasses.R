@@ -690,13 +690,30 @@ setMethod(f="show", signature="ExtSDF",
 setClass("SDFset", representation(SDF="list", ID="character"))
 
 ## Store many SDFs in SDFset Object
-read.SDFset <- function(sdfstr=sdfstr, ...) {
+read.SDFset <- function(sdfstr=sdfstr,skipErrors=FALSE, ...) {
 	## If a file name is provided run read.SDFstr function first
 	if(is.character(sdfstr)) { 
 		sdfstr <- read.SDFstr(sdfstr=sdfstr) 
 	}
 	## Iterate over SDFstr components	
-	sdfset <- lapply(seq(along=sdfstr@a), function(x) .sdfParse(sdfstr2list(sdfstr)[[x]], ...))
+	sdfset <- lapply(seq(along=sdfstr@a), 
+						  function(x){
+							  tryCatch(
+								  .sdfParse(sdfstr2list(sdfstr)[[x]], ...),
+								  error=function(error){
+									  if(skipErrors){
+										  warning("failed to parse item ",x,": ",error)
+										  NA
+									  }else
+										  stop("failed to parse item ",x,": ",error)
+								  }
+								)
+						  })
+	failedToParse <- is.na(sdfset)
+	if(sum(failedToParse) != 0)
+		warning("Failed to parse input compounds at indexe(s) (",paste(which(failedToParse),collapse=", "),
+				  "). These have been removed from the output.")
+	sdfset <- sdfset[!failedToParse]
 	sdfset <- new("SDFset", SDF=sdfset, ID=paste("CMP", seq(along=sdfset), sep=""))
 	## Validity check of SDFs based on atom/bond block column numbers
 	badsdf <- sum(!validSDF(sdfset))
