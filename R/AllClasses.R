@@ -2752,3 +2752,34 @@ cstrsplit <- function(line) .Call(cstrsplitSym,line)
 #					',plugin="Rcpp")
 
 	
+SDFDataTable <- function(sdfset) {
+
+	data = cbind( lapply(seq(along=sdfset),function(i){
+				tempF = tempfile()
+				sdf2image(sdfset[i],tempF,format="SVG",height=200,TRUE,TRUE,outputOptions = c('d'))
+				encoding = base64encode(tempF)
+				unlink(tempF)
+				encoding
+	} ), datablock2ma(datablock(sdfset)))
+	colnames(data)[1] = "Image"
+
+	datatable(data,
+				 extensions= c('Buttons','FixedColumns','FixedHeader'),
+				 options = list(
+									 dom="Bfrtipl",
+									 buttons = c("colvis","csv"),
+									 scrollX=TRUE,
+									 fixedColumns= list(leftColumns=2),
+									 #fixedHeader = TRUE,
+									 pageLength = 5,
+									 columnDefs = list(list(
+																	targets = 1,
+																	data = "image",
+																	render = JS(
+																		"function(data,type,row,meta){",
+																		"	return \"<img = height=100 width=100 src='data:image/svg+xml;base64,\"+row[1]+\"'>\";",
+																		"}")
+																	))))
+
+
+}

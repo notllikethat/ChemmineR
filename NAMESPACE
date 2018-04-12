@@ -1,6 +1,6 @@
 ## IMPORTS
 import(methods, graphics, stats, RCurl, rjson, DBI,digest,Rcpp,
-	ggplot2,grid,gridExtra,png)
+	ggplot2,grid,gridExtra,png,base64enc,DT)
 
 useDynLib(ChemmineR)
 
@@ -101,6 +101,8 @@ export(
     ## Chemmine Tools
     "status","browseJob","result","listCMTools","toolDetails","launchCMTool",
 
-	 "genParameters"
+	 "genParameters",
+	 "SDFDataTable"
+
 )
 

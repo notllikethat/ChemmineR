@@ -818,7 +818,8 @@ fpSim <- function(x, y, sorted=TRUE, method="Tanimoto",
 sdf2image <- function(sdf,filename,format="SVG",
 							 height=300,
 							 noHbonds=TRUE,
-							 regenCoords=FALSE){
+							 regenCoords=FALSE,
+							 outputOptions=c()){
 	 .ensureOB()
 
     if(! class(sdf) == "SDFset"){
@@ -834,6 +835,9 @@ sdf2image <- function(sdf,filename,format="SVG",
 		 genOps = rbind(genOps,data.frame(names="d",args=""))
 	 if(regenCoords)
 		 genOps = rbind(genOps,data.frame(names="gen2D",args=""))
+
+	 outOps= rbind(outOps,data.frame(names=outputOptions,args=""))
+
 
 	 defs = sdfSet2definition(sdf)
 	 convertToImage("SDF",format,defs,filename,
