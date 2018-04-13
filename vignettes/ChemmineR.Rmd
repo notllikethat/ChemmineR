@@ -1476,6 +1476,21 @@ Substructure highlighting by atom numbers:
 
 <div align="right">[Back to Table of Contents]()</div>
 
+
+Data Tables
+------------
+Compound images and data can also be viewed in a web browser. 
+This allows you to page through the table, as well as filter
+the results using the search box. Results can be sorted on
+any column by clicking on the column title. Compound images are
+rendered as SVGs, so you can zoom in on them to see more details.
+
+```{r datatable, eval=TRUE, tidy=FALSE}
+data(sdfsample)
+SDFDataTable(sdfsample[1:5])
+
+```
+
 Online with ChemMine Tools
 --------------------------
 

@@ -30,6 +30,7 @@
 }
 \examples{
 	library(ChemmineR)
+	library(DT)
 	data(sdfsample)
 
 	# this will open a browser to display the result

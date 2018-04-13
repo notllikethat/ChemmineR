@@ -3,10 +3,13 @@
 \section{CHANGES IN VERSION 2.32.0}{
    \subsection{NEW FEATURES}{
 		\itemize{
-			\item SDFDataTable function, allows viewing compund image and
+			\item SDFDataTable function, allows viewing compound image and
 			data in a web browser.
 			\item read.SDFset can now skip over compounds with syntax
 			errors in sdf files.
+			\item The functions 'getIds', 'searchString', and 'searchSim'
+			have been modified to query pubchem directly rather than
+			going through the intermediate web service 'ChemmineTools'.
 		}
 	}
 }
