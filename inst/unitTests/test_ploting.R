@@ -1,5 +1,5 @@
 
-#test.openBabelPlot <- function() {
-#	data(sdfsample)
-#	openBabelPlot(sdfsample[1])
-#}
+test.openBabelPlot <- function() {
+	data(sdfsample)
+	openBabelPlot(sdfsample[1])
+}

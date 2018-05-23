@@ -836,7 +836,7 @@ sdf2image <- function(sdf,filename,format="SVG",
 	 if(regenCoords)
 		 genOps = rbind(genOps,data.frame(names="gen2D",args=""))
 
-	 outOps= rbind(outOps,data.frame(names=outputOptions,args=""))
+	 outOps= rbind(outOps,data.frame(names=outputOptions,args=rep("",length(outputOptions))))
 
 
 	 defs = sdfSet2definition(sdf)

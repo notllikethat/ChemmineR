@@ -2686,20 +2686,20 @@ plotStruc <- function(sdf,
 # plotStruc(sdf=sdfset[[2]], atomcex=1.2, atomnum=F, no_print_atoms=c("C"), noHbonds=TRUE, bondspacer=0.08)
 # par(mfrow=c(2,3)); for(i in 1:6) plotStruc(sdf=sdfset[[i]], atomcex=1.8, atomnum=F, no_print_atoms=c("C"), noHbonds=TRUE, bondspacer=0.08)
 # disabled for now as rsvg is not available on bioC
-#openBabelPlot=function(sdfset,
-#							 height=600,
-#							 noHbonds=TRUE,
-#							 regenCoords=FALSE
-#){
-#	.ensureOB()
-#
-#	tempF = tempfile()
-#	sdf2image(sdfset,tempF,format="SVG",height=height,noHbonds,regenCoords)
-#	img = rsvg(tempF)
-#	file.remove(tempF)
-#	plot(c(0,100),c(0,100), type="n", axes=F, xlab="", ylab="")
-#	rasterImage(img,0,0,100,100)
-#}
+openBabelPlot=function(sdfset,
+							 height=600,
+							 noHbonds=TRUE,
+							 regenCoords=FALSE
+){
+	.ensureOB()
+
+	tempF = tempfile()
+	sdf2image(sdfset,tempF,format="SVG",height=height,noHbonds,regenCoords)
+	img = rsvg(tempF)
+	file.remove(tempF)
+	plot(c(0,100),c(0,100), type="n", axes=F, xlab="", ylab="")
+	rasterImage(img,0,0,100,100)
+}
 
 ## Plot method for single SDF object
 setMethod(f="plot", signature="SDF", definition=function(x, print=TRUE, ...) { 
