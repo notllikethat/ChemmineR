@@ -829,8 +829,10 @@ sdf2image <- function(sdf,filename,format="SVG",
 	 genOps = data.frame(names=character(0),args=character(0))
 	 outOps = data.frame(names=character(0),args=character(0))
 
-	 if(height != 300) #differs from default
-		 outOps = rbind(outOps,data.frame(names="p",args=as.character(height)))
+	 if(height != 300){ #differs from default
+		 optName = if(format == "SVG") "P" else "p"
+		 outOps = rbind(outOps,data.frame(names=optName,args=as.character(height)))
+	 }
 	 if(noHbonds)
 		 genOps = rbind(genOps,data.frame(names="d",args=""))
 	 if(regenCoords)

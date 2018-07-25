@@ -2694,7 +2694,7 @@ openBabelPlot=function(sdfset,
 	.ensureOB()
 
 	tempF = tempfile()
-	sdf2image(sdfset,tempF,format="SVG",height=height,noHbonds,regenCoords)
+	sdf2image(sdfset,tempF,format="SVG",height=height,noHbonds,regenCoords,outputOptions=c("t"))
 	img = rsvg(tempF)
 	file.remove(tempF)
 	plot(c(0,100),c(0,100), type="n", axes=F, xlab="", ylab="")
