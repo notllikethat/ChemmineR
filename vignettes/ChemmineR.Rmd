@@ -323,11 +323,18 @@ exactMassOB(sdfset[1:5])
 
 `regenerateCoords`: Re-compute the 2D coordinates of a compound using Open Babel. This can sometimes
 improve the quality of the compounds plot. See also the `regenCoords` option of the plot function.
-```{r eval=TRUE, tidy=FALSE}
+```{r eval=TRUE, tidy=FALSE,fig.height=5,fig.width=5}
 sdfset2 = regenerateCoords(sdfset[1:5])
 
 plot(sdfset[1], regenCoords=TRUE,print=FALSE)
 ```
+
+OpenBabel can also be used to plot compounds directly:
+```{r eval=TRUE, tidy=FALSE, dev='svg',fig.height=5,fig.width=5}
+openBabelPlot(sdfset[4],regenCoords=TRUE)
+```
+
+
 
 `generate3DCoords`: Generate 3D coordinates for compounds with only 2D coordinates.
 ```{r eval=FALSE, tidy=FALSE}
