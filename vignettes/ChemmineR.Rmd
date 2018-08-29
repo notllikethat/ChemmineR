@@ -106,7 +106,7 @@ installed from R using the `bioLite` install command.
 
 ```{r eval=FALSE}
  source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script. 
- biocLite("ChemmineR") # Installs the package. 
+ BiocManager::install("ChemmineR") # Installs the package. 
  
 ```
 
