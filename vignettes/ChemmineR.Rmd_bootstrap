@@ -70,12 +70,12 @@ Installation
 
 The R software for running ChemmineR can be downloaded from CRAN
 (<http://cran.at.r-project.org/>). The ChemmineR package can be
-installed from R using the *bioLite* install command.
+installed from R with:
 
 ```{r eval=FALSE}
- source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script. 
- biocLite("ChemmineR") # Installs the package. 
- 
+ if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+ BiocManager::install("ChemmineR")
 ```
 
 

@@ -81,10 +81,12 @@ unlink("test.db")
 \section{Getting Started}
 
 \subsection{Installation}
-The R software for running ChemmineR can be downloaded from CRAN (\url{http://cran.at.r-project.org/}). The ChemmineR package can be installed from R using the \Rfunction{bioLite} install command. 
+The R software for running ChemmineR can be downloaded from CRAN (\url{http://cran.at.r-project.org/}). The ChemmineR package can be installed from R with:
 <<eval=FALSE>>=
-source("http://bioconductor.org/biocLite.R") # Sources the biocLite.R installation script. ENDCOMMENT
-biocLite("ChemmineR") # Installs the package. ENDCOMMENT
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("ChemmineR")
+library("ChemmineR")
 @
 
 \subsection{Loading the Package and Documentation}
