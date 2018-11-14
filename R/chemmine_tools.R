@@ -154,6 +154,6 @@ searchSim <- function(sdf) {
    # cids <- as.numeric(result(jobToken))
    # if(length(cids) == 0) return(SDFset())
    # getIds(cids)
-	pubchemSDFSearch(smiles)
+	pubchemSDFSearch(sdf)
 
 }
