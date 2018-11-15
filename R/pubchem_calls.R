@@ -29,7 +29,7 @@ pubchemSDFSearch = function(sdf){
    } 
    
 	url = paste(pubchemServerURL,"compound","fastsimilarity_2d","sdf","SDF",sep="/")
-	message("url: ",url)
+	#message("url: ",url)
 
 	sdfStr = paste(as(sdf[[1]],"character"),collapse="\r\n")
 	read.SDFset(readLines(textConnection(rawToChar(postForm(url,sdf = sdfStr)))))
@@ -40,9 +40,20 @@ pubchemSDF2PNG = function(sdf,outputFile){
    } 
    
 	url = paste(pubchemServerURL,"compound","fastsimilarity_2d","sdf","PNG",sep="/")
-	message("url: ",url)
+	#message("url: ",url)
 
 	sdfStr = paste(as(sdf[[1]],"character"),collapse="\r\n")
 	pngData = postForm(url,sdf=sdfStr)
 	writeBin(pngData[1:length(pngData)],outputFile)
+}
+pubchemName2CID = function(name){
+	
+	url = paste(pubchemServerURL,"compound","name",name,"cids","txt",sep="/")
+	#message("url: ",url)
+
+	sdfStr = paste(as(sdf[[1]],"character"),collapse="\r\n")
+	tryCatch(
+		readLines(suppressWarnings(url(url))),
+		error=function(e) NA,
+		warning=function(e) NA)
 }

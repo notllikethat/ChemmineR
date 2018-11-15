@@ -76,7 +76,7 @@ export(
     ## Source: chemmine_tools.R
     "getIds", "searchString", "searchSim", "sdf2smiles", "smiles2sdf",
 
-	 "pubchemCidToSDF","pubchemSmilesSearch","pubchemSDFSearch",
+	 "pubchemCidToSDF","pubchemSmilesSearch","pubchemSDFSearch","pubchemName2CID",
 
     ## Clustering functions
     ## Source: cluster.R
