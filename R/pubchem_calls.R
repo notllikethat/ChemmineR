@@ -51,7 +51,6 @@ pubchemName2CID = function(name){
 	url = paste(pubchemServerURL,"compound","name",name,"cids","txt",sep="/")
 	#message("url: ",url)
 
-	sdfStr = paste(as(sdf[[1]],"character"),collapse="\r\n")
 	tryCatch(
 		readLines(suppressWarnings(url(url))),
 		error=function(e) NA,
