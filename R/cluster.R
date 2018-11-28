@@ -152,12 +152,13 @@ cmp.cluster <- function(db, cutoff, is.similarity=TRUE, save.distances=FALSE,
   		if (!quiet) cat("calculating distance matrix\n")
 		len = length(descdb)
 		distmat <- matrix(1, ncol=len, nrow=len)
+		distmat[len,len] <- 0 #we never reach i=len in loop below, so set this diagonal element here
 		for (i in 1:(len-1)) {
 			distmat[i, i] <- 0
 			for (j in (i+1):len) {
-				d <- 1 - .cmp.similarity(descdb[[i]], descdb[[j]], ...)
-				distmat[i, j] <- d
-				distmat[j, i] <- d
+					d <- 1 - .cmp.similarity(descdb[[i]], descdb[[j]], ...)
+					distmat[i, j] <- d
+					distmat[j, i] <- d
         		}
         		prog_ratio <- i / (len - 1)
         		prog_ratio <- prog_ratio * 2 - prog_ratio * prog_ratio
