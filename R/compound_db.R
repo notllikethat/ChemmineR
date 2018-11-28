@@ -1053,8 +1053,21 @@ getPreparedQuery <- function(conn,statement,bind.data){
 
 
 
-DUD <- function(){
-	getDbConn("dud.db")
+DUD <- function(destinationDir="."){
+	#getDbConn("dud.db")
+	URL ="http://biocluster.ucr.edu/~khoran/datasets/dud.tar.gz"
+	destFile = file.path(destinationDir,"dud.tar.gz")
+	if(!file.exists(file.path(destinationDir,"dud.db"))){
+		message("dud.db not found in '",destinationDir,"', downloading. This could take several minutes.")
+		download.file(URL,destFile,mode="wb")
+		message("unpacking...")
+		#gunzip(destFile)
+		untar(destFile)
+		unlink(destFile,force=TRUE)
+		message("done")
+	}
+
+	initDb(file.path(destinationDir,"dud.db"))
 }
 DrugBank <- function(){
 	getDbConn("drugbank.db")
