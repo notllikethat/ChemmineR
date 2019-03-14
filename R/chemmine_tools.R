@@ -2,6 +2,8 @@
 # by Tyler William H Backman
 
 .serverURL <- "http://chemmine.ucr.edu/ChemmineR/"
+#.serverURL <- "http://ec2-18-219-7-240.us-east-2.compute.amazonaws.com/ChemmineR/" ## dev machine
+
 
 # check job status
 status <- function(object){

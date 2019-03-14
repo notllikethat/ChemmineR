@@ -850,7 +850,7 @@ sdf2image <- function(sdf,filename,format="SVG",
 ######################################
 ## Query ChemMine Web Tools Service ##
 ######################################
-.serverURL <- "http://chemmine.ucr.edu/ChemmineR/"
+#.serverURL <- "http://chemmine.ucr.edu/ChemmineR/"
 
 # perform sdf to smiles conversion
 sdf2smilesOB <- function(sdf) {
