@@ -219,3 +219,27 @@ test.pubchemPUG <- function(){
 
 }
 
+test.largestComponent <- function(){
+	DEACTIVATED("just for manual testing")
+	print("----------------")
+	testSdf = smiles2sdf(c(
+								  "O=C(NC1CCCC1)CN(c1cc2OCCOc2cc1)C(=O)CCC(=O)Nc1noc(c1)C	TEST1",
+								  "CC.CC(=O)C1=CC2=C(C=C1)SC3=CC=CC=C3N2CCCN(C)C.C(=CC(=O)O)C(=O)O	TEST2",
+								  "Cl.CCC1C2CC3C4C5(CC(C2C5O)N3C1O)C6=CC=CC=C6N4C	TEST3"))
+	answer =  (c( "O=C(NC1CCCC1)CN(c1cc2OCCOc2cc1)C(=O)CCC(=O)Nc1noc(c1)C",
+					 "CC(=O)C1=CC2=C(C=C1)SC3=CC=CC=C3N2CCCN(C)C",
+					 "CCC1C2CC3C4C5(CC(C2C5O)N3C1O)C6=CC=CC=C6N4C"))
+	names(answer) = c("TEST1","TEST2","TEST3")
+
+	largestComps = largestComponent(testSdf)
+
+	message("result: ")
+	print(as.character(sdf2smiles(largestComps)))
+	print(answer)
+
+	print(largestComps==answer)
+
+	checkTrue(all(largestComps==answer))
+	print("----------------")
+}
+

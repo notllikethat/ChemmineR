@@ -1068,3 +1068,18 @@ sdf2OBMol<- function(sdfSet){
 	forEachMol("SDF",defs,identity,c)
 }
 
+largestComponent <- function(sdfSet){
+	smiles = as.character(sdf2smiles(sdfSet))
+	splits = strsplit(smiles,'.',fixed=TRUE)
+	largestComps = sapply(splits,
+			 function(comps){  
+				 comps[sort.int(vapply(comps,function(x){nchar(x)},0),
+									 decreasing=TRUE,
+									 index.return=TRUE)$ix][1] 
+			 })
+	#print(largestComps)
+	compsSdf = smiles2sdf(largestComps)
+	cid(compsSdf) = cid(sdfSet)
+	compsSdf
+}
+

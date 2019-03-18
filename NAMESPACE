@@ -67,6 +67,7 @@ export(
 	 "propOB","fingerprintOB", "regenerateCoords",
 	 "smartsSearchOB","exactMassOB", "generate3DCoords","canonicalize",
 	 "canonicalNumbering",
+	 "largestComponent",
     
     ## Fingerprint functions
     ## Source: sim.R
