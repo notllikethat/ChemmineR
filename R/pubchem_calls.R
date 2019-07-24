@@ -8,10 +8,21 @@ pubchemCidToSDF = function(cids){
    
    if(length(cids) == 0)
        stop('no compounds to retrieve- input must contain at least one cid')
-   
 
-	url = paste(pubchemServerURL,"compound","cid",paste(cids,collapse=","),"SDF",sep="/")
-	read.SDFset(readLines(suppressWarnings(url(url))))
+	finalSDF=NA
+   
+	batchByIndex(cids,function(indexBatch){
+		url = paste(pubchemServerURL,"compound","cid",paste(indexBatch,collapse=","),"SDF",sep="/")
+		suppressWarnings(
+			if(is.na(finalSDF)){
+				finalSDF<<-read.SDFset(readLines(url(url)))
+			}else{
+				finalSDF<<-c(finalSDF,read.SDFset(readLines(url(url))))
+			})
+	},100)
+	cid(finalSDF) = makeUnique(cid(finalSDF),silent=TRUE)
+	finalSDF
+
 }
 pubchemSmilesSearch = function(smiles){
 	if(class(smiles) == "SMIset")
