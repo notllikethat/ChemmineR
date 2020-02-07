@@ -1,5 +1,14 @@
 \name{NEWS}
 \title{ChemmineR News}
+\section{CHANGES IN VERSION 3.40.0}{
+   \subsection{NEW FEATURES}{
+		\itemize{
+			\item Prior to this version, V3000 sdf files could be read, but would be written back
+			out in V2000 format. Now these files will be written back out as V3000 files.
+		}
+	}
+}
+
 \section{CHANGES IN VERSION 2.32.0}{
    \subsection{NEW FEATURES}{
 		\itemize{

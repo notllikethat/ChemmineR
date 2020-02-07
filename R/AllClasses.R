@@ -147,15 +147,9 @@ setClass("SDF", representation(header="character", atomblock="matrix",
 ## Convert SDFstr to SDF Class
 ## SDFstr Parser Function
 
-v2kTimes = new.env()
-v2kTimes$header = 0
-v2kTimes$atom = 0
-v2kTimes$bond = 0
-v2kTimes$data = 0
 
 
-.sdfParse <- function(sdf, datablock=TRUE, tail2vec=TRUE,extendedAttributes=FALSE ) {
-	t=Sys.time()
+.sdfParse <- function(sdf, datablock=TRUE, tail2vec=TRUE,extendedAttributes=TRUE) {
 	countpos <- grep("V\\d\\d\\d\\d$", sdf, perl=TRUE)
 	if(length(countpos)==0)  
 		countpos <- grep("V {0,}\\d\\d\\d\\d$", sdf, perl=TRUE) 
@@ -178,9 +172,7 @@ v2kTimes$data = 0
 	## Header block
 	header <- sdf[index["header",1]:index["header",2]]
 	if(length(header)==4) names(header) <- c("Molecule_Name", "Source", "Comment", "Counts_Line")	
-	v2kTimes$header <- v2kTimes$header + (Sys.time() - t)
 	
-	t=Sys.time()
 	## Atom block
 	## format: x y z <atom symbol> 
 	ab2matrix <- function(ct=sdf[index["atom",1]:index["atom",2]]) {
@@ -212,9 +204,7 @@ v2kTimes$data = 0
 		return(ctma)
 	}
 	atomblock <- ab2matrix(ct=sdf[index["atom",1]:index["atom",2]])
-	v2kTimes$atom<- v2kTimes$atom+ (Sys.time() - t)
 	
-	t=Sys.time()
 	## Bond block
 	bb2matrix <- function(ct=sdf[index["bond",1]:index["bond",2]]) {
 		#if((index["bond","end"] - index["bond","start"]) < 1) {
@@ -232,16 +222,13 @@ v2kTimes$data = 0
                 return(ctma)
 	}
 	bondblock <- bb2matrix(ct=sdf[index["bond",1]:index["bond",2]])
-	v2kTimes$bond<- v2kTimes$bond + (Sys.time() - t)
 	
 	
-	t=Sys.time()
 	if(tail2vec==TRUE) {
 		extradata <- ex2vec(extradata=sdf[index["extradata",1]:index["extradata",2]])
 	} else {	
 		extradata <- sdf[index["extradata",1]:index["extradata",2]]
 	}
-	v2kTimes$data<- v2kTimes$data+ (Sys.time() - t)
 
 	## Assemble components in object of class SDF
 	if(datablock==TRUE) {
@@ -283,18 +270,11 @@ findPositions = function(sdf){
 	tagPositions
 
 }
-v3kTimes = new.env()
-v3kTimes$header = 0
-v3kTimes$atom = 0
-v3kTimes$atomCore = 0
-v3kTimes$bond = 0
-v3kTimes$data = 0
 
-.parseV3000 <- function(sdf, datablock=TRUE, tail2vec=TRUE,extendedAttributes=FALSE) {
+.parseV3000 <- function(sdf, datablock=TRUE, tail2vec=TRUE,extendedAttributes=TRUE) {
 	#message("found V3000 formatted compound")
 	sdfLength = length(sdf)
 
-	t=Sys.time()
 	tagPositions=findPositions(sdf)
 
 
@@ -308,17 +288,11 @@ v3kTimes$data = 0
 		names(header) <- c("Molecule_Name", "Source", "Comment", "Counts_Line")	
 
 	countLinePos = tagPositions[2]
-	if(countLinePos == -1){
-		counts=c(0,0)
-	}else{
-		counts = as.numeric(cstrsplit(sdf[countLinePos])[c(4,5)])
-	}
-	#message("class of counts: ",class(counts))
-	#print(counts)
-	v3kTimes$header <- v3kTimes$header + (Sys.time() - t)
+	if(countLinePos != -1)
+		header["Counts_Line"] = sdf[countLinePos]
+	
 
 
-	t=Sys.time()
 	#message("parsing atomblock")
 	atomPos = tagPositions[3]
 	if(atomPos == -1){
@@ -397,10 +371,8 @@ v3kTimes$data = 0
 		colnames(atomblock) = paste("C",c(1:3,5:11),sep="")
 		rownames(atomblock) = paste(data[,2],data[,1],sep="_")
 	}
-	v3kTimes$atom<- v3kTimes$atom+ (Sys.time() - t)
 
 
-	t=Sys.time()
 	#message("parsing bond block")
 	bondPos = tagPositions[5]
 	if(bondPos == -1){
@@ -413,7 +385,6 @@ v3kTimes$data = 0
 	  		bondEndPos = bondPos + 1 #assume and emtpy atom block
 		}
 
-#t2=Sys.time()
 		data = Reduce(rbind,Map(function(line) {
 				#cstrsplit(line)[3:6]
 				parts = cstrsplit(line)
@@ -422,7 +393,6 @@ v3kTimes$data = 0
 						  else ""
 				c(parts[3:6],attrs)
 			}, sdf[(bondPos+1):(bondEndPos-1)]))  #TODO: check for empty range
-#v3kTimes$atomCore<- v3kTimes$atomCore+ (Sys.time() - t2)
 		extBondAttrs = parseAttributes(data[,5])  # +2.6s
 
 		# CFG  bond configuration(stereo)  change: 0 -> 0, 1-> 1, 2-> 4, 3->6
@@ -454,11 +424,9 @@ v3kTimes$data = 0
 		colnames(bondblock) = paste("C",1:7,sep="")
 		rownames(bondblock) = data[,1]
 	}
-	v3kTimes$bond<- v3kTimes$bond+ (Sys.time() - t)
 
 
 	#message("parsing extra data")
-	t=Sys.time()
 	endPos = tagPositions[7]
 	if(endPos == -1){
 		warning("no END tag found in ",sdf[1])
@@ -471,7 +439,6 @@ v3kTimes$data = 0
 		else
 			extradata = vector("character",length=0)
 	}
-	v3kTimes$data <- v3kTimes$data + (Sys.time() - t)
 
 	## Assemble components in object of class SDF
 	className = "SDF"
@@ -525,6 +492,15 @@ parseAttributes <- function(attributes){
 				})
 			 }
 	 })
+}
+attributesAsString<- function(attributes){
+	sapply(attributes,
+			 function(x){ 
+				 return(
+						  if(length(x) > 0) 
+							  paste(apply(cbind(names(x),E="=",x),1,function(row) paste(row,collapse="") ),collapse=" ")  
+						  else "") })
+
 }
 ## Accessor methods for SDF class
 setGeneric(name="sdf2list", def=function(x) standardGeneric("sdf2list"))
@@ -883,7 +859,14 @@ setMethod(f="c", signature="SDFset", definition=function(x, y) {
 setGeneric(name="sdf2str", def=function(sdf, head, ab, bb, db, cid=NULL, sig=FALSE, ...) standardGeneric("sdf2str"))
 setMethod(f="sdf2str", signature="SDF", definition = function(sdf, head, ab, bb, db, cid=NULL, sig=FALSE, ...) {
 	## Checks
-	if(class(sdf)!="SDF") stop("Function expects molecule object of class SDF as input!")	
+	if(class(sdf)!="SDF" && class(sdf) != "ExtSDF") stop("Function expects molecule object of class SDF as input!")	
+
+	if(.hasSlot(sdf,"version") && sdf@version == "V3000"){
+		if(extends(class(sdf),"ExtSDF"))
+			return(writeV3000(sdf,head,ab,bb,db,cid,sig))
+		else #not enough info for V3000 output, but need to at least fix count line to make compatible with V2000
+			sdf[[1]]["Counts_Line"] = paste0("", nrow(atomblock(sdf)), " ", nrow(bondblock(sdf)), "  0  0  0  0  0  0  0  0999 V2000")  
+	}
 	
 	## Header
 	if(missing(head)) {
@@ -912,7 +895,7 @@ setMethod(f="sdf2str", signature="SDF", definition = function(sdf, head, ab, bb,
 		db <- sdf[[4]]
 		if(length(db)>0) {
 			dbnames <- paste("> <", names(db), ">", sep="")
-			dbvalues <- as.character(db)
+			dbvalues <- gsub(" __ ",if(.Platform$OS.type=="unix")"\n" else "\r\n", as.character(db))
 			db <- as.vector(rbind(dbnames, dbvalues, ""))
 		} else {
 			db <- NULL
@@ -921,8 +904,74 @@ setMethod(f="sdf2str", signature="SDF", definition = function(sdf, head, ab, bb,
 	
 	## Assemble in character vector
 	sdfstrvec <- c(head, ab, bb, "M  END", db, "$$$$")
-        return(sdfstrvec)
+   return(sdfstrvec)
 })
+
+writeV3000 <- function(sdf,head,ab,bb,db,cid=NULL, sig=FALSE) {
+	## Header
+	if(missing(head)) {
+		head <- as.character(sdf[[1]])
+		if(sig==TRUE) head[2] <- paste("ChemmineR-", format(Sys.time(), "%m%d%y%H%M"), "XD", sep="")	
+		if(length(cid)==1) head[1] <- cid
+	}
+	head[4] = "0 0 0 0 0 999 V3000"
+	
+	## Atom block
+	if(missing(ab)) {
+		ab <- sdf[[2]]
+		ab <- cbind(Prefix="M  V30", 
+						seq(along=ab[,1]),
+						A=gsub("_.*", "", rownames(ab)), # molecule name
+						ab[,1:3],  #coordinates
+						rep(0,length(ab[,1])),
+						attributesAsString(sdf@extendedAtomAttributes)
+												) 
+		ab <- sapply(seq(along=ab[,1]), function(x) paste(ab[x, ], collapse=" "))
+	}
+
+	## Bond block
+	if(missing(bb)) {
+		bb <- sdf[[3]]
+		bb <- cbind(Prefix="M  V30",
+						seq(along=bb[,1]), 
+						bb[,c(3,1,2)],
+						attributesAsString(sdf@extendedBondAttributes)
+						)
+		bb <- sapply(seq(along=bb[,1]), function(x) paste(bb[x, ], collapse=" "))
+	}
+
+	## Data block
+	if(missing(db)) {
+		db <- sdf[[4]]
+		if(length(db)>0) {
+			dbnames <- paste("> <", names(db), ">", sep="")
+			dbvalues <- gsub(" __ ",if(.Platform$OS.type=="unix")"\n" else "\r\n", as.character(db))
+			db <- as.vector(rbind(dbnames, dbvalues, ""))
+		} else {
+			db <- NULL
+		}
+	}
+	
+	miscNumbers = strsplit(sdf[[1]]["Counts_Line"],split="\\s+",)[[1]][6:8]
+	
+	counts = paste("M  V30 COUNTS",length(ab),length(bb),miscNumbers[1],miscNumbers[2],miscNumbers[3] )
+	## Assemble in character vector
+	sdfstrvec <- c(head, 
+						"M  V30 BEGIN CTAB",
+						counts,
+						"M  V30 BEGIN ATOM",
+						ab, 
+						"M  V30 END ATOM",
+						"M  V30 BEGIN BOND",
+						bb, 
+						"M  V30 END BOND",
+						"M  V30 END CTAB",
+						"M  END", 
+						db, 
+						"$$$$")
+   return(sdfstrvec)
+
+}
 
 ## Coerce Methods for SDFset Class 
 ## SDFset to list with lists of SDF sub-components
