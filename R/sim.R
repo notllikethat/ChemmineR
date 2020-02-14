@@ -132,19 +132,19 @@ cstrsplitSym=NA
     dbcon.b=NULL, db.intsize.b=4)
 {
     ## ThG: added for compatability with new S4 classes APset/AP
-    if(class(a)=="APset") { a <- ap(a)[[1]] }
-    if(class(b)=="APset") { b <- ap(b)[[1]] }
-    if(class(a)=="AP") { a <- ap(a) }
-    if(class(b)=="AP") { b <- ap(b) }
+    if(inherits(a,"APset")) { a <- ap(a)[[1]] }
+    if(inherits(b,"APset")) { b <- ap(b)[[1]] }
+    if(inherits(a,"AP")){ a <- ap(a) }
+    if(inherits(b,"AP")){ b <- ap(b) }
     ## ThG: end of lines
     # check argument, make sure they are vectors and not lists
-    if (class(a) == 'character' && length(a) == 3 && a[[1]] == 'filedb:') 
+    if (is.character(a) && length(a) == 3 && a[[1]] == 'filedb:') 
         a <- .load.file.backed.desc(a, dbcon.a, db.intsize.a)
-    if (class(b) == 'character' && length(b) == 3 && b[[1]] == 'filedb:') 
+    if (is.character(b) && length(b) == 3 && b[[1]] == 'filedb:') 
         b <- .load.file.backed.desc(b, dbcon.b, db.intsize.b)
     if (is.null(b) || is.null(a))
         return(0)
-    if (class(b) != "numeric" || class(a) != "numeric") {
+    if (!is.numeric(b) || !is.numeric(a) ) {
         stop("Both arguments must be AP/APset objects or descriptors in the form of vectors.\n",
         "Did you use \"[]\" instead of \"[[]]\" to index the descriptor ",
         "database?")
@@ -195,8 +195,8 @@ cmp.search <- function(db, query, type=1, cutoff=0.5, return.score=FALSE, quiet=
     ## Note: type argument was also added (has no impact on old list object). 
     dbtype <- as.character(class(db))
     if(dbtype=="APset") { db <- apset2descdb(db) }
-    if(class(query)=="APset") query <- ap(query[[1]]) 
-    if(class(query)=="AP") query <- ap(query) 
+    if(inherits(query,"APset")) query <- ap(query[[1]]) 
+    if(inherits(query,"AP")) query <- ap(query) 
     ## ThG: end of lines
     if (.is.file.backed.desc(query))
         query <- .load.file.backed.desc(query)
@@ -338,10 +338,10 @@ db.subset <- function(db, cmps)
 db.explain <- function(desc)
 {
     ## ThG: added for compatability with new S4 classes APset/AP ##
-    if(class(desc)=="APset") desc <- ap(desc[[1]])
-    if(class(desc)=="AP") desc <- ap(desc) 
+    if(inherits(desc,"APset")) desc <- ap(desc[[1]])
+    if(inherits(desc,"AP")) desc <- ap(desc) 
     ## ThG: end of lines ##
-    if ('character' %in% class(desc)) {
+    if (is.character(desc)) {
         if (.is.file.backed.desc(desc))
             desc <- .load.file.backed.desc(desc)
         else
@@ -508,8 +508,7 @@ db.explain <- function(desc)
     if (length(filename) != 1)
         stop('reference sdf must be a vector of only one entry!')
 
-    if (!("connection" %in% class(filename)) &&
-        !("character" %in% class(filename)))
+    if (!("connection" %in% class(filename)) && !is.character(filename))
         stop('reference sdf must be an SDF file or one character string of sdf')
 
     if ("connection" %in% class(filename))
@@ -547,7 +546,7 @@ db.explain <- function(desc)
 
 .is.file.backed.desc <- function(desc)
 {
-    "character" %in% class(desc) && length(desc) == 3 && desc[[1]] == 'filedb:'
+     is.character(desc) && length(desc) == 3 && desc[[1]] == 'filedb:'
 }
 
 .load.file.backed.desc <- function(desc, dbcon=NULL, intsize=4)
@@ -604,15 +603,15 @@ db.explain <- function(desc)
 data(pubchemFPencoding); pubchemFPencoding <- pubchemFPencoding 
 fp2bit <- function(x, type=3, fptag="PUBCHEM_CACTVS_SUBSKEYS") {
 	## Covert base 64 strings to matrix
-	if(class(x)=="SDFset") {
+	if(inherits(x,"SDFset")) {
 		blockmatrix <- datablock2ma(datablocklist=datablock(x))
 		fp <- blockmatrix[, fptag]
 	}
-	if(class(x)=="matrix") { 
+	if(is.matrix(x)) { 
 		blockmatrix <- x
 		fp <- blockmatrix[, fptag]
 	}
-	if(class(x)=="character") { 
+	if(is.character(x)) { 
 		fp <- x
 	}
 	fpma <- unlist(strsplit(fp, ""))
@@ -647,28 +646,26 @@ fp2bit <- function(x, type=3, fptag="PUBCHEM_CACTVS_SUBSKEYS") {
 ## Fingerprint comparison and similarity search function 
 fpSimOrig <- function(x, y, sorted=TRUE, method="Tanimoto", addone=1, cutoff=0, top="all", alpha=1, beta=1, ...) {
 	## Predefined similarity methods
-	if(class(method)=="character") {
-	 	if(method=="Tanimoto" | method=="tanimoto") method <- function(a,b,c,d) (c+addone)/(a+b+c+addone)
-	}
-	if(class(method)=="character") {
-	 	if(method=="Euclidean" | method=="euclidean") method <- function(a,b,c,d) sqrt((c+d+addone)/(a+b+c+d+addone))
-	}
-	if(class(method)=="character") {
-	 	if(method=="Tversky" | method=="tversky") method <- function(a,b,c,d) (c+addone)/(alpha*a + beta*b+c+addone)
-	}
-	if(class(method)=="character") {
-	 	if(method=="Dice" | method=="dice") method <- function(a,b,c,d) (2*c+addone)/(a+c+b+c+addone)
+	if(is.character(method)) {
+	 	if(method=="Tanimoto" | method=="tanimoto") 
+			method <- function(a,b,c,d) (c+addone)/(a+b+c+addone)
+		else if(method=="Euclidean" | method=="euclidean") 
+			method <- function(a,b,c,d) sqrt((c+d+addone)/(a+b+c+d+addone))
+		else if(method=="Tversky" | method=="tversky") 
+			method <- function(a,b,c,d) (c+addone)/(alpha*a + beta*b+c+addone)
+		else if(method=="Dice" | method=="dice") 
+			method <- function(a,b,c,d) (2*c+addone)/(a+c+b+c+addone)
 	}
 	## Check for valid inputs
-	if(!any(c(is.vector(x), class(x)=="FP", class(x)=="FPset" & length(x)==1))) stop("x needs to be object of class FP, FPset of length one, or vector")
-        if(!any(c(is.vector(y), is.matrix(y), class(y)=="FP", class(y)=="FPset"))) stop("y needs to be object of class FP/FPset, vector or matrix")
+	if(!any(c(is.vector(x), inherits(x,"FP"), inherits(x,"FPset") & length(x)==1))) stop("x needs to be object of class FP, FPset of length one, or vector")
+   if(!any(c(is.vector(y), is.matrix(y), inherits(y,"FP"), inherits(y,"FPset") ))) stop("y needs to be object of class FP/FPset, vector or matrix")
 	## Convert FP/FPset inputs into vector/matrix format
-	if(class(x)=="FP") x <- as.numeric(x)
-	if(class(x)=="FPset") x <- as.numeric(x[[1]])
-	if(class(y)=="FP") y <- as.numeric(y)
-	if(class(y)=="FPset") y <- as.matrix(y)
+	if(inherits(x,"FP")) x <- as.numeric(x)
+	if(inherits(x,"FPset")) x <- as.numeric(x[[1]])
+	if(inherits(y,"FP")) y <- as.numeric(y)
+	if(inherits(y,"FPset")) y <- as.matrix(y)
         ## Computate similarities
-	if(class(y)=="matrix") {
+	if(is.matrix(y)) {
 		c <- colSums((t(y) + x) == 2)
 		d <- colSums((t(y) + x) == 0)
 		b <- rowSums(y) - c
@@ -701,7 +698,7 @@ fpSim <- function(x, y, sorted=TRUE, method="Tanimoto",
 						addone=1, cutoff=0, top="all", alpha=1, beta=1,
 						parameters=NULL,scoreType="similarity") {
 
-	if(class(method)=="character") {
+	if(is.character(method)) {
 	 	if(method=="Tanimoto" | method=="tanimoto") 
 			method <- 0
 		else if(method=="Euclidean" | method=="euclidean") 
@@ -718,22 +715,22 @@ fpSim <- function(x, y, sorted=TRUE, method="Tanimoto",
 		#stop("invalid method type found: ",class(method))
 
 
-	if(!any(c(is.vector(x), class(x)=="FP", class(x)=="FPset" & length(x)==1))) 
+	if(!any(c(is.vector(x),inherits(x,"FP") , inherits(x,"FPset") & length(x)==1))) 
 		stop("x needs to be object of class FP, FPset of length one, or vector")
-   if(!any(c(is.vector(y), is.matrix(y), class(y)=="FP", class(y)=="FPset"))) 
+   if(!any(c(is.vector(y), is.matrix(y),inherits(y,"FP") ,inherits(y,"FPset") )) )
 		stop("y needs to be object of class FP/FPset, vector or matrix")
 
 	## Convert FP/FPset inputs into vector/matrix format
-	if(class(x)=="FP") 
+	if(inherits(x,"FP")) 
 		x <- as.numeric(x)
-	else if(class(x)=="FPset") 
+	else if(inherits(x,"FPset")) 
 		x <- as.numeric(x[[1]])
 
-	if(class(y)=="FP") {
+	if(inherits(y,"FP")) {
 		dbSize = 1
 		y <- as.numeric(y)
 	}
-	else if(class(y)=="FPset"){
+	else if(inherits(y,"FPset")){
 		 dbSize=length(y)
 		 y <- as.matrix(y)
 	}
@@ -822,7 +819,7 @@ sdf2image <- function(sdf,filename,format="SVG",
 							 outputOptions=c()){
 	 .ensureOB()
 
-    if(! class(sdf) == "SDFset"){
+    if(! inherits(sdf,"SDFset") ){
         stop('reference compound must be a compound of class \"SDFset\"')
     } 
 
@@ -854,7 +851,7 @@ sdf2image <- function(sdf,filename,format="SVG",
 
 # perform sdf to smiles conversion
 sdf2smilesOB <- function(sdf) {
-    if(! class(sdf) == "SDFset"){
+    if(! inherits(sdf,"SDFset")){
         stop('reference compound must be a compound of class \"SDFset\"')
     } 
 
@@ -865,7 +862,7 @@ sdf2smilesOB <- function(sdf) {
 		 t=Reduce(rbind,strsplit(unlist(strsplit(convertFormat("SDF","SMI",defs),
 															  "\n",fixed=TRUE)),
 					 "\t",fixed=TRUE))
-		 if(class(t)=="character"){ # R rearranged our matrix because there was only one result
+		 if(is.character(t)){ # R rearranged our matrix because there was only one result
 			 smiles=t[1]
 			 names(smiles)=t[2]
 		 }else{
@@ -905,10 +902,10 @@ sdf2smilesWeb <- function(sdfset,limit=100){
 }
 
 smiles2sdfOB <- function(smiles) {
-    if(!class(smiles) %in% c("character", "SMIset")){
+    if(!any(class(smiles) %in% c("character", "SMIset"))){
         stop('input must be SMILES strings stored as \"SMIset\" or \"character\" object')
     }
-	 if(class(smiles)=="SMIset") smiles <- as.character(smiles)
+	 if(inherits(smiles,"SMIset")) smiles <- as.character(smiles)
 	 if(.haveOB()) {
 		 sdf = definition2SDFset(convertFormat("SMI","SDF",paste(paste(smiles,names(smiles),sep="\t"), collapse="\n")))
 		 cid(sdf)=sdfid(sdf)
@@ -948,11 +945,11 @@ canonicalNumbering <- canonicalNumberingOB
 applyOptions <- function(sdf,options){
 	.ensureOB()
 
-	if(class(sdf) == "SDFset" || class(sdf)=="SDF"){
+	if(inherits(sdf,"SDFset") || inherits(sdf,"SDF")){
 		defs = sdfSet2definition(sdf)
 		sdfNew = definition2SDFset(convertFormat("SDF","SDF",defs,options))
 		cid(sdfNew)=sdfid(sdf)
-		if(class(sdf)=="SDF")
+		if(inherits(sdf,"SDF"))
 			sdfNew[[1]]
 		else
 			sdfNew

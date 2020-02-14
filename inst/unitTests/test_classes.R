@@ -49,11 +49,13 @@ test.fp <- function(){
 
 test.fpset <- function(){
 
+	message("======= testing fpset ===============================================")
 	data = matrix(replicate(1280,if(runif(1)>0.5)1 else 0),10,128)
 	fpset = new("FPset",fpma=data)
 
 	checkTrue(inherits(fpset,"FPset"))
 
+	message("======= folding... ")
 	x=fold(fpset)
 	checkEquals(numBits(x),64)
 	checkEquals(foldCount(x),1)

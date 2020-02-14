@@ -638,14 +638,14 @@ nearestNeighbors <- function(x, numNbrs=NULL,cutoff=NULL,...){
 
 trimNeighbors <- function(nnm,cutoff){
 
-	if(class(nnm$similarities) == "matrix"){
+	if(is.matrix(nnm$similarities) ){
 		for(i in 1:nrow(nnm$similarities)){
 				 nonMatches = nnm$similarities[i,] < cutoff 
 				 nnm$similarities[i,nonMatches] = NA
 				 nnm$indexes[i,nonMatches] = NA
 				 #nnm$names[i,nonMatches] = NA
 		}
-	}else if(class(nnm$similarities) == "list"){
+	}else if(is.list(nnm$similarities) ){
 		for(i in 1:length(nnm$similarities)){
 				 matches = nnm$similarities[[i]] >= cutoff
 				 nnm$similarities[[i]] = nnm$similarities[[i]][matches]

@@ -783,7 +783,7 @@ setMethod(f="[[", signature="SDFset", definition=function(x, i, ..., drop) {
 ## Batch replacement of header, atomblock, bondblock and datablock sections for
 ## one to all SDF objects in an SDFset.
 .gsubsdfsec <- function(sdfset, what, secdata) {
-	if(class(secdata) %in% c("data.frame", "matrix")) { 
+	if(any(class(secdata) %in% c("data.frame", "matrix"))) { 
 		secdata <- as.matrix(secdata)
 		tmp <- as.list(seq(along=secdata[,1]))
 		for(i in seq(along=tmp)) {
@@ -1494,7 +1494,7 @@ setMethod(f="fold",signature="FPset", definition=function(x,count,bits) {
 								 result = foldVector(y,count,bits)
 								 actualFolds <<- result$actualFoldCount #just keep the last one, they should all be the same
 								 result$fp	 })
-			 if(class(data) != "matrix") # account for case when fp gets folded down to 1
+			 if(!is.matrix(data)) # account for case when fp gets folded down to 1
 				 dim(data) = c(nrow(x@fpma),1)
 			 else
 				 data = t(data)
@@ -2086,7 +2086,7 @@ groups <- function(x, groups="fctgroup", type="countMA") {
 	neighbors <- .neighbors(x, type)
         ## Return neighbor counts if requested
 	if(groups[1]=="neighbors") { 
-		if(class(neighbors)=="matrix") {
+		if(is.matrix(neighbors)) {
 			neighbors <- neighbors[!rownames(neighbors) %in% "dummy", ]
 		} else { 
 			neighbors <- neighbors[!names(neighbors) %in% "dummy"]
