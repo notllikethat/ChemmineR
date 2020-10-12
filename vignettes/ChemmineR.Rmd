@@ -16,7 +16,7 @@ bibliography: references.bib
 %% \VignetteEngine{knitr::rmarkdown}
 %% \VignetteEncoding{UTF-8}
 %\VignetteIndexEntry{ChemmineR}
-%% \VignetteDepends{ChemmineOB, fmcsR, ChemmineDrugs}
+%% \VignetteDepends{fmcsR, ChemmineDrugs}
 %% \VignetteKeywords{cheminformatics, structural searching, clustering}
 %% \VignettePackage{ChemmineR}
 -->
@@ -43,9 +43,10 @@ knitr::opts_chunk$set(
 ```{r setup, echo=FALSE, messages=FALSE, warnings=FALSE}
 suppressPackageStartupMessages({
     library(ChemmineR)
-    library(ChemmineOB)
     library(fmcsR)
     library(ggplot2)
+	 #library(ChemmineOB)
+	
 })
 ```
 
@@ -306,31 +307,31 @@ propOB(sdfset[1])
 
 `fingerprintOB`: generates fingerprints for compounds. The fingerprint name can be anything supported by OpenBabel. See the man page
 for a current list.
-```{r eval=TRUE, tidy=FALSE}
+```{r eval=FALSE, tidy=FALSE}
 fingerprintOB(sdfset,"FP2")
 ```
 
 `smartsSearchOB`: find matches of SMARTS patterns in compounds
-```{r eval=TRUE, tidy=FALSE}
+```{r eval=FALSE, tidy=FALSE}
 #count rotable bonds
 smartsSearchOB(sdfset[1:5],"[!$(*#*)&!D1]-!@[!$(*#*)&!D1]",uniqueMatches=FALSE)
 ```
 
 `exactMassOB`: Compute the monoisotopic (exact) mass of a set of compounds
-```{r eval=TRUE, tidy=FALSE}
+```{r eval=FALSE, tidy=FALSE}
 exactMassOB(sdfset[1:5])
 ```
 
 `regenerateCoords`: Re-compute the 2D coordinates of a compound using Open Babel. This can sometimes
 improve the quality of the compounds plot. See also the `regenCoords` option of the plot function.
-```{r eval=TRUE, tidy=FALSE,fig.height=5,fig.width=5}
+```{r eval=FALSE, tidy=FALSE,fig.height=5,fig.width=5}
 sdfset2 = regenerateCoords(sdfset[1:5])
 
 plot(sdfset[1], regenCoords=TRUE,print=FALSE)
 ```
 
 OpenBabel can also be used to plot compounds directly:
-```{r eval=TRUE, tidy=FALSE, dev='svg',fig.height=5,fig.width=5}
+```{r eval=FALSE, tidy=FALSE, dev='svg',fig.height=5,fig.width=5}
 openBabelPlot(sdfset[4],regenCoords=TRUE)
 ```
 
@@ -343,13 +344,13 @@ sdf3D = generate3DCoords(sdfset[1])
 
 `canonicalize`: Compute a canonicalized atom numbering. This allows compounds with the same molecular
 structure but different atom numberings to be compared properly.
-```{r eval=TRUE, tidy=FALSE}
+```{r eval=FALSE, tidy=FALSE}
 canonicalSdf= canonicalize(sdfset[1])
 ```
 
 `canonicalNumbering`: Return a mapping from the original atom numbering to the 
 canonical atom number.
-```{r eval=TRUE, tidy=FALSE}
+```{r eval=FALSE, tidy=FALSE}
 mapping = canonicalNumbering(sdfset[1])
 ```
 
@@ -1492,7 +1493,7 @@ the results using the search box. Results can be sorted on
 any column by clicking on the column title. Compound images are
 rendered as SVGs, so you can zoom in on them to see more details.
 
-```{r datatable, eval=TRUE, tidy=FALSE}
+```{r datatable, eval=FALSE, tidy=FALSE}
 data(sdfsample)
 SDFDataTable(sdfsample[1:5])
 

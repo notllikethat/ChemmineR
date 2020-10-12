@@ -21,9 +21,11 @@ exactMassOB(sdfset)
 	Kevin Horan
 }
 \examples{
+	\dontrun{
 	library(ChemmineR)
 	data(sdfsample)
 	mass = exactMassOB(sdfsample)
+	}
 }
 \keyword{exact}
 \keyword{mass}

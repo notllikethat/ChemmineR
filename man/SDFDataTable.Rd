@@ -29,15 +29,17 @@
 	Kevin Horan
 }
 \examples{
-	library(ChemmineR)
-	library(DT)
-	data(sdfsample)
+	\dontrun{ #depends on ChemmineOB
+		library(ChemmineR)
+		library(DT)
+		data(sdfsample)
 
-	# this will open a browser to display the result
-	x=SDFDataTable(sdfsample[1:3]) 
+		# this will open a browser to display the result
+		x=SDFDataTable(sdfsample[1:3]) 
 
-	# if no GUI is available or you want to save the HTML result:
-	saveWidget(x,"output.html")
+		# if no GUI is available or you want to save the HTML result:
+		saveWidget(x,"output.html")
+	}
 
 	
 }

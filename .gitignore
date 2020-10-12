@@ -54,3 +54,5 @@ vignettes/fix.sed
 vignettes/features.csv
 vignettes/test.db
 *.DS_Store
+doc
+Meta

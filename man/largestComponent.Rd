@@ -24,7 +24,9 @@
 	Kevin Horan
 }
 \examples{
-	sdf = smiles2sdf(c("Cl.CCC1C2CC3C4C5(CC(C2C5O)N3C1O)C6=CC=CC=C6N4C	TEST"))
-	lg = largestComponent(sdf)
+	\dontrun{
+		sdf = smiles2sdf(c("Cl.CCC1C2CC3C4C5(CC(C2C5O)N3C1O)C6=CC=CC=C6N4C	TEST"))
+		lg = largestComponent(sdf)
+	}
 
 }

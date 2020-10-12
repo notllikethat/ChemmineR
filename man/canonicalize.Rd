@@ -30,8 +30,10 @@ canonicalize(sdf)
 }
 
 \examples{
+	\dontrun{
 	data(sdfsample)
 	canonicalSdf = canonicalize(sdfsample[1])
+	}
 }
 \keyword{canonical}
 \keyword{morgan}

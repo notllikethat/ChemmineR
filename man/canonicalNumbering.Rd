@@ -36,8 +36,10 @@ canonicalNumbering(sdf)
 \code{\link{canonicalize}}
 }
 \examples{
+	\dontrun{
 	data(sdfsample)
 	labels = canonicalNumbering(sdfsample[1])
+	}
 }
 \keyword{canonical}
 \keyword{morgan}
