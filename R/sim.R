@@ -855,67 +855,35 @@ sdf2smilesOB <- function(sdf) {
         stop('reference compound must be a compound of class \"SDFset\"')
     } 
 
-	 if(.haveOB()){
-		 #sdfstrList=as(as(sdf,"SDFstr"),"list")
-		 #defs = paste(Map(function(x) paste(x,collapse="\n"), sdfstrList),collapse="\n" )
-		 defs = sdfSet2definition(sdf)
-		 t=Reduce(rbind,strsplit(unlist(strsplit(convertFormat("SDF","SMI",defs),
-															  "\n",fixed=TRUE)),
-					 "\t",fixed=TRUE))
-		 if(is.character(t)){ # R rearranged our matrix because there was only one result
-			 smiles=t[1]
-			 names(smiles)=t[2]
-		 }else{
-			 smiles = t[,1]
-			 names(smiles)= t[,2]
-		 }
-		 as(smiles, "SMIset")
+	 .ensureOB()
+	 #sdfstrList=as(as(sdf,"SDFstr"),"list")
+	 #defs = paste(Map(function(x) paste(x,collapse="\n"), sdfstrList),collapse="\n" )
+	 defs = sdfSet2definition(sdf)
+	 t=Reduce(rbind,strsplit(unlist(strsplit(convertFormat("SDF","SMI",defs),
+														  "\n",fixed=TRUE)),
+				 "\t",fixed=TRUE))
+	 if(is.character(t)){ # R rearranged our matrix because there was only one result
+		 smiles=t[1]
+		 names(smiles)=t[2]
 	 }else{
-		 message("ChemmineOB not found, falling back to web service version. This will be much slower")
-		 sdf2smilesWeb(sdf)
+		 smiles = t[,1]
+		 names(smiles)= t[,2]
 	 }
+	 as(smiles, "SMIset")
 }
 sdf2smiles <- sdf2smilesOB
 
-sdf2smilesWeb <- function(sdfset,limit=100){
-	#message("class of sdfset: ",class(sdfset))
-	 if(length(sdfset) > limit)
-		 sdfset = sdfset[1:limit]
 
-	 smiles =c()
-	 for(i in seq(along=sdfset)){
-
-		#message("class of sdfset[[]]: ",class(sdfset[[i]]))
-		 sdf <- sdf2str(sdfset[[i]])
-		 sdf <- paste(sdf, collapse="\n")
-		 response <- postForm(paste(.serverURL, "runapp?app=sdf2smiles", sep=""), sdf=sdf)[[1]]
-		 if(grepl("^ERROR:", response)){
-				  stop(response)
-		 }
-		 response <- sub("\n$", "", response) # remove trailing newline
-		 id <- sub(".*\t(.*)$", "\\1", response) # get id
-		 response <- sub("\t.*$", "", response) # get smiles
-		 names(response) <- id
-		 smiles = c(smiles,response)
-	 }
-	 as(smiles,"SMIset")
-}
 
 smiles2sdfOB <- function(smiles) {
     if(!any(class(smiles) %in% c("character", "SMIset"))){
         stop('input must be SMILES strings stored as \"SMIset\" or \"character\" object')
     }
 	 if(inherits(smiles,"SMIset")) smiles <- as.character(smiles)
-	 if(.haveOB()) {
-		 sdf = definition2SDFset(convertFormat("SMI","SDF",paste(paste(smiles,names(smiles),sep="\t"), collapse="\n")))
-		 cid(sdf)=sdfid(sdf)
-		 sdf
-	 }else{
-		 message("ChemmineOB not found, falling back to web service version. This will be much slower")
-		 sdf =smiles2sdfWeb(smiles)
-		 cid(sdf)=sdfid(sdf)
-		 sdf
-	 }
+	 .ensureOB()
+	 sdf = definition2SDFset(convertFormat("SMI","SDF",paste(paste(smiles,names(smiles),sep="\t"), collapse="\n")))
+	 cid(sdf)=sdfid(sdf)
+	 sdf
 }
 smiles2sdf <- smiles2sdfOB
 
@@ -955,31 +923,6 @@ applyOptions <- function(sdf,options){
 			sdfNew
 	}else
 		stop("input to applyOptions must be a SDFset or SDF object. Found ",class(sdf))
-}
-
-# perform smiles to sdf conversion through ChemMine Web Tools
-smiles2sdfWeb <- function(smiles,limit=100) {
-	if(length(smiles) > limit)
-		smiles = smiles[1:limit]
-
-	 smileStrings = if(! is.null(names(smiles)))
-        paste(smiles, names(smiles), sep="\t")
-	 else
-		  smiles
-    
-	 sdfs = c()
-	 for(smile  in smileStrings){
-		 response <- postForm(paste(.serverURL, "runapp?app=smiles2sdf", sep=""), smiles=smile)[[1]]
-		 if(grepl("^ERROR:", response))
-			  stop(response)
-		 
-		 response <- strsplit(response, "\n")
-		 response <- as(as(response, "SDFstr"), "SDFset")[[1]]
-		 #response <- as(response, "SDFstr")
-		 sdfs = c(sdfs,response)
-	 }
-	 names(sdfs)=names(smiles)
-	 as(sdfs,"SDFset")
 }
 
 times = new.env()
