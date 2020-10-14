@@ -208,6 +208,7 @@ test.parseV3000 <- function() {
 
 test.pubchemPUG <- function(){
 
+	DEACTIVATED("Causes SSL protocol version error on BioC")
 	sdf = ChemmineR:::pubchemCidToSDF(c(434,435))
 	message("cid to sdf, length: ",length(sdf))	
 	checkEquals(length(sdf),2)
