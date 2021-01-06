@@ -8,9 +8,11 @@ test.formatConversions <- function() {
 
 	data(sdfsample)
 
-	smiles = sdf2smiles(sdfsample[1:10])
+	smiles = sdf2smiles(sdfsample[1])
 	sdfs = smiles2sdf(smiles)
 	smiles2 = sdf2smiles(sdfs)
+	smiles =gsub("[\r\n]", "", smiles) #remove newlines and convert to simple string
+  smiles2 =gsub("[\r\n]", "", smiles2)
 
 	checkEquals(smiles,smiles2)
 
