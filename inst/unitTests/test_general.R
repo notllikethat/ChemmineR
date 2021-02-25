@@ -2,7 +2,7 @@
 
 
 test.formatConversions <- function() {
-	if(! ChemmineR:::.haveOB()) 
+	#if(! ChemmineR:::.haveOB()) 
 		DEACTIVATED("this test requires ChemmineOB, but not installed")
 	message("test.formatConversions")
 
@@ -58,7 +58,7 @@ test.propOB <- function() {
 
 }
 test.fingerprintOB <- function(){
-	if(require(ChemmineOB)){
+	if(FALSE && require(ChemmineOB)){
 		data(sdfsample)
 		fp = fingerprintOB(sdfsample[1:5],"FP2")
 		checkEquals(fptype(fp),"FP2")
@@ -68,6 +68,7 @@ test.fingerprintOB <- function(){
 	}
 }
 test.obmolRefs <- function() {
+		DEACTIVATED("this test requires ChemmineOB, but not installed")
 	data(sdfsample)
 	if(require(ChemmineOB)){
 		obmolRef = obmol(sdfsample[[1]])
@@ -83,7 +84,7 @@ test.obmolRefs <- function() {
 
 }
 test.smartsSearchOB <- function(){
-	if(! ChemmineR:::.haveOB()) 
+	#if(! ChemmineR:::.haveOB()) 
 		DEACTIVATED("this test requires ChemmineOB, but not installed")
 	data(sdfsample)
 	rotableBonds = smartsSearchOB(sdfsample[1:5],"[!$(*#*)&!D1]-!@[!$(*#*)&!D1]",uniqueMatches=FALSE)
@@ -138,7 +139,7 @@ test.fpSimParameters<- function(){
 
 }
 test.exactMassOB <- function(){
-	if(! ChemmineR:::.haveOB()) 
+	#if(! ChemmineR:::.haveOB()) 
 		DEACTIVATED("this test requires ChemmineOB, but not installed")
 	data(sdfsample)
 	mass = exactMassOB(sdfsample[1:5])
@@ -155,7 +156,7 @@ test.3dCoords <-function(){
 	
 }
 test.canonicalize <- function(){
-	if(! ChemmineR:::.haveOB()) 
+	#if(! ChemmineR:::.haveOB()) 
 		DEACTIVATED("this test requires ChemmineOB, but not installed")
 	data(sdfsample)
 	cansdf = canonicalize(sdfsample[1])
