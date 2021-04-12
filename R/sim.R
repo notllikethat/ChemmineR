@@ -571,7 +571,8 @@ db.explain <- function(desc)
 
 .haveOB <- function()
 {
-	if(suppressWarnings(require('ChemmineOB', quietly=T))) {
+	if(suppressWarnings(require('ChemmineOB', quietly=T))
+		&& ChemmineOB:::.supportedPlatform()) {
 		return(TRUE)
    }else{
 		return(FALSE)
