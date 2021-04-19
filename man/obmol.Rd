@@ -29,7 +29,7 @@ object of class \code{SDF} or \code{SDFset}
 }
 \examples{
 ## SDF/SDFset instances
-if(require(ChemmineOB)){
+if(ChemmineR:::.haveOB()){
 	data(sdfsample)
 	sdfset <- sdfsample
 	sdf <- sdfset[[1]]
