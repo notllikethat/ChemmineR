@@ -176,16 +176,15 @@ setClass("SDF", representation(header="character", atomblock="matrix",
 	## Atom block
 	## format: x y z <atom symbol> 
 	ab2matrix <- function(ct=sdf[index["atom",1]:index["atom",2]]) {
-		if(FALSE) {
+		if ((index["atom","end"] - index["atom","start"]) < 1) {
 			ctma <- matrix(rep(0,2), 1, 2, dimnames=list("0", c("C1", "C2"))) # Creates dummy matrix in case there is none.
 		} else {
 			starts <- c(1, 11, 21, 32, 35, 37 + 3 * seq(0, 10))
-      			ends <- starts + c(10, 10, 10, 3, 2, rep(3, 11)) - 1
-			for (i in 1:length(ct)) {
-					ct[[i]] <- paste0(substring(ct[[i]], starts, ends), collapse = " ")
-			}
-			ct <- gsub("^ {1,}", "", ct)
-			ctlist <- strsplit(ct, " {1,}")
+      		ends <- starts + c(10, 10, 10, 3, 2, rep(3, 11)) - 1
+			
+      		ctlist <- lapply(ct, substring, first=starts, last=ends)
+      		ctlist <- lapply(ctlist, sub, pattern="^ *", replacement="")
+      		
 			ctma <- tryCatch(matrix(unlist(ctlist), 
 											ncol=length(ctlist[[1]]), 
 											nrow=length(ct), 
